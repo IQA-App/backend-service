@@ -4,10 +4,9 @@
 * @Keldieva
 * @LMalushkina
 * @Yuriy-SE
+* @OlgaAutomation4
 
 # Codeowners to all the workflows
 .github/ @Elgrueber
 .github/ @Rom-T
-.github/ @Keldieva
-.github/ @OlgaAutomation4
 .github/ @sashakolsky
