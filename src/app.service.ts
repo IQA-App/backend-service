@@ -6,6 +6,6 @@ export class AppService {
     return 'Hello World!';
   }
   getProfile(): string {
-    return 'My Profile';
+    return 'My Profile Стартап для бедных';
   }
 }
