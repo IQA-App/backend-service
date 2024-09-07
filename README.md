@@ -21,6 +21,9 @@ $ npm run start:dev
 
 # production mode
 $ npm run start:prod
+
+# run db locally on mac machine if you have postgresql@15
+$ brew services restart postgresql@15
 ```
 
 ## Run tests
