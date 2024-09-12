@@ -9,11 +9,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import * as argon2 from 'argon2';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
+    private readonly jwtService: JwtService,
   ) {}
   async create(createUserDto: CreateUserDto) {
     const existUser = await this.userRepository.findOne({
@@ -27,7 +29,12 @@ export class UserService {
       password: await argon2.hash(createUserDto.password),
     });
 
-    return { user };
+    const access_token = this.jwtService.sign({
+      id: user.id,
+      email: createUserDto.email,
+    });
+
+    return { user, access_token };
   }
 
   async findAll() {
@@ -35,10 +42,18 @@ export class UserService {
     return users;
   }
 
-  async findOne(id: number) {
+  async findOneById(id: number) {
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) throw new BadRequestException(`User with ID ${id} not found!`);
     return user;
+  }
+
+  async findOne(email: string) {
+    const requestedEmail = await this.userRepository.findOne({
+      where: { email: email },
+    });
+    console.log('-- FindOne --', requestedEmail);
+    return requestedEmail;
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
@@ -61,7 +76,9 @@ export class UserService {
     const userToDelete = await this.userRepository.findOne({ where: { id } });
     if (!userToDelete)
       throw new BadRequestException(`User with id ${id} not found!`);
-    const deleteUser = await this.userRepository.delete(id);
-    return deleteUser;
+
+    await this.userRepository.delete(id);
+
+    return { message: `The user with id:${id} deleted` };
   }
 }

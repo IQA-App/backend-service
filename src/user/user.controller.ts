@@ -8,10 +8,15 @@ import {
   Delete,
   UsePipes,
   ValidationPipe,
+  UseGuards,
+  Request,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('user')
 export class UserController {
@@ -19,28 +24,53 @@ export class UserController {
 
   @Post()
   @UsePipes(new ValidationPipe())
+  @ApiTags('user')
+  @ApiOperation({ summary: 'Create user' })
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
 
   @Get()
+  @UsePipes(new ValidationPipe())
+  @ApiTags('user')
+  @ApiOperation({ summary: 'Retrieve all users' })
   findAll() {
     return this.userService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+  @UsePipes(new ValidationPipe())
+  @ApiTags('user')
+  @ApiOperation({ summary: 'Get user by id' })
+  findOneById(@Param('id') id: string) {
+    return this.userService.findOneById(+id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiTags('user')
+  @ApiOperation({ summary: 'Update user' })
+  @ApiBearerAuth()
   @Patch(':id')
   @UsePipes(new ValidationPipe())
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(+id, updateUserDto);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  @UsePipes(new ValidationPipe())
+  @ApiTags('user')
+  @ApiOperation({ summary: 'Delete user by ID' })
+  async remove(@Param('id') id: string, @Request() req) {
+    console.log('-- User from request: --', req.user);
+    const requestingUserId = req.user.id; //  get data from request object
+    if (requestingUserId !== +id) {
+      // Users can only delete their own accounts
+      throw new UnauthorizedException(
+        'You are not allowed to delete this user!',
+      );
+    }
     return this.userService.remove(+id);
   }
 }
