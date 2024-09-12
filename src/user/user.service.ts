@@ -29,7 +29,10 @@ export class UserService {
       password: await argon2.hash(createUserDto.password),
     });
 
-    const access_token = this.jwtService.sign({ id: user.id,email: createUserDto.email });
+    const access_token = this.jwtService.sign({
+      id: user.id,
+      email: createUserDto.email,
+    });
 
     return { user, access_token };
   }
@@ -73,7 +76,9 @@ export class UserService {
     const userToDelete = await this.userRepository.findOne({ where: { id } });
     if (!userToDelete)
       throw new BadRequestException(`User with id ${id} not found!`);
-    const deleteUser = await this.userRepository.delete(id);
-    return deleteUser;
+
+    await this.userRepository.delete(id);
+
+    return { message: `The user with id:${id} deleted` };
   }
 }
