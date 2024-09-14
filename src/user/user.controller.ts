@@ -46,21 +46,21 @@ export class UserController {
     return this.userService.findOneById(+id);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @ApiTags('user')
-  @ApiOperation({ summary: 'Update user' })
-  @ApiBearerAuth()
   @Patch(':id')
   @UsePipes(new ValidationPipe())
+  @UseGuards(JwtAuthGuard)
+  @ApiTags('user')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update user' })
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(+id, updateUserDto);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @Delete(':id')
   @UsePipes(new ValidationPipe())
+  @UseGuards(JwtAuthGuard)
   @ApiTags('user')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete user by ID' })
   async remove(@Param('id') id: string, @Request() req) {
     console.log('-- User from request: --', req.user);

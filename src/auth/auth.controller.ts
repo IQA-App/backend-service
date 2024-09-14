@@ -29,11 +29,11 @@ export class AuthController {
     return this.authService.login(req.user);
   }
 
+  @Get('profile') //  currently, it returns the user specified in the access token
   @UseGuards(JwtAuthGuard)
   @ApiTags('auth')
   @ApiOperation({ summary: 'Profile' })
   @ApiBearerAuth()
-  @Get('profile') //  currently, it returns the user specified in the access token
   getProfile(@Request() req) {
     return req.user;
   }

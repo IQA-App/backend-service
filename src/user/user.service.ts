@@ -14,7 +14,8 @@ import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
   ) {}
   async create(createUserDto: CreateUserDto) {
@@ -73,7 +74,9 @@ export class UserService {
   }
 
   async remove(id: number) {
-    const userToDelete = await this.userRepository.findOne({ where: { id } });
+    const userToDelete = await this.userRepository.findOne({
+      where: { id },
+    });
     if (!userToDelete)
       throw new BadRequestException(`User with id ${id} not found!`);
 
