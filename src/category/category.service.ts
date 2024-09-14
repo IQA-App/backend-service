@@ -49,6 +49,7 @@ export class CategoryService {
   }
 
   async findOne(id: number) {
+    if (isNaN(id)) throw new BadRequestException('The id must be a number!');
     const category = await this.categoryRepository.findOne({
       where: { id },
       relations: {
@@ -65,6 +66,7 @@ export class CategoryService {
   }
 
   async update(id: number, updateCategoryDto: UpdateCategoryDto) {
+    if (isNaN(id)) throw new BadRequestException('The id must be a number!');
     const category = await this.categoryRepository.findOne({
       where: { id },
     });
