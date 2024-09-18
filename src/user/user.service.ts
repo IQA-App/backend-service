@@ -18,6 +18,7 @@ export class UserService {
     private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
   ) {}
+
   async create(createUserDto: CreateUserDto) {
     const existUser = await this.userRepository.findOne({
       where: {
@@ -44,6 +45,8 @@ export class UserService {
   }
 
   async findOneById(id: number) {
+    if (isNaN(id)) throw new BadRequestException('The id must be a number!');
+
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) throw new BadRequestException(`User with ID ${id} not found!`);
     return user;

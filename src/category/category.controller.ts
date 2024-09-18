@@ -10,6 +10,7 @@ import {
   UseGuards,
   UsePipes,
   ValidationPipe,
+  BadRequestException,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -42,15 +43,23 @@ export class CategoryController {
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe())
   @ApiTags('category')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get category by id' })
   findOne(@Param('id') id: string) {
+    const numericId = Number(id);
+    if (!id.trim() || isNaN(numericId) || numericId <= 0) {
+      throw new BadRequestException(
+        'Ah ah ! The category_id cannot be a whitespace! or the category_id  must be a number! or the category_id  must be a positive number!',
+      );
+    }
     return this.categoryService.findOne(+id);
   }
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe())
   @ApiTags('category')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update category by id' })
@@ -58,15 +67,28 @@ export class CategoryController {
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
   ) {
+    const numericId = Number(id);
+    if (!id.trim() || isNaN(numericId) || numericId <= 0) {
+      throw new BadRequestException(
+        'Ah ah ! The category_id cannot be a whitespace! or the category_id  must be a number! or the category_id  must be a positive number!',
+      );
+    }
     return this.categoryService.update(+id, updateCategoryDto);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe())
   @ApiTags('category')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete category by id' })
   remove(@Param('id') id: string) {
+    const numericId = Number(id);
+    if (!id.trim() || isNaN(numericId) || numericId <= 0) {
+      throw new BadRequestException(
+        'Ah ah ! The category_id cannot be a whitespace! or the category_id  must be a number! or the category_id  must be a positive number!',
+      );
+    }
     return this.categoryService.remove(+id);
   }
 }
