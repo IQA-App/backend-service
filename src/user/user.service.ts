@@ -14,9 +14,11 @@ import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
   ) {}
+
   async create(createUserDto: CreateUserDto) {
     const existUser = await this.userRepository.findOne({
       where: {
@@ -43,6 +45,8 @@ export class UserService {
   }
 
   async findOneById(id: number) {
+    if (isNaN(id)) throw new BadRequestException('The id must be a number!');
+
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) throw new BadRequestException(`User with ID ${id} not found!`);
     return user;
@@ -73,7 +77,9 @@ export class UserService {
   }
 
   async remove(id: number) {
-    const userToDelete = await this.userRepository.findOne({ where: { id } });
+    const userToDelete = await this.userRepository.findOne({
+      where: { id },
+    });
     if (!userToDelete)
       throw new BadRequestException(`User with id ${id} not found!`);
 

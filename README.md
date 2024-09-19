@@ -39,6 +39,10 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Swagger
+
+- Swagger is here: [Swagger](https://backapp-dhfngacba4gna8de.eastus-01.azurewebsites.net/api)
+
 ## Resources
 
 Check out a few resources that may come in handy when working with NestJS:

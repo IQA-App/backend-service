@@ -14,7 +14,7 @@ export class BaseUserDto {
   @MinLength(6, { message: 'Password must be at least 6 characters!' })
   @MaxLength(20, { message: 'Password must be at most 20 characters long!' })
   @Matches(/.*\d/, {
-    message: 'Password must contains at least one digit!',
+    message: 'Password must contain at least one digit!',
   })
   @Matches(/[a-z]/, {
     message: 'Password must contain at least one lowercase letter!',
