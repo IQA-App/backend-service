@@ -1,11 +1,33 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Transaction } from './entities/transaction.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class TransactionService {
-  create(createTransactionDto: CreateTransactionDto) {
-    return 'This action adds a new transaction';
+  constructor(
+    @InjectRepository(Transaction)
+    private readonly transactionRepository: Repository<Transaction>,
+  ) {}
+
+  async create(createTransactionDto: CreateTransactionDto, id: number) {
+    const newTransaction = {
+      title: createTransactionDto.title,
+      amount: createTransactionDto.amount,
+      type: createTransactionDto.type,
+      category: { id: +createTransactionDto.category },
+      user: { id },
+    };
+
+    console.log('- newTransaction -', newTransaction);
+
+    if (!newTransaction) throw new BadRequestException('Something went wrong');
+    return await this.transactionRepository.save(newTransaction);
+
+    
+    
   }
 
   findAll() {

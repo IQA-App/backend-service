@@ -21,7 +21,7 @@ export class Category {
   title: string;
 
   @ManyToOne(() => User, (user) => user.categories)
-  @JoinColumn({ name: 'user_id' })
+  @JoinColumn({ name: 'user_id' }) 
   user: User;
 
   @OneToMany(() => Transaction, (transaction) => transaction.category)
