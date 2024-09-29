@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+  
 
 jobs:
   build:
@@ -36,10 +38,32 @@ jobs:
         
   dev:
     runs-on: ubuntu-latest
-    name: "Dev deploy"
+    name: "DEV deploy"
     needs: build
 
     steps:
+      - name: Deploy
+        run: ""
+      - name: Test
+        run: ""
+  qa:
+    runs-on: ubuntu-latest
+    name: "QA deploy"
+    needs: build
+
+    steps:
+      - name: Deploy
+        run: ""
+      - name: Test
+        run: ""
+  prod:
+    runs-on: ubuntu-latest
+    name: "PROD deploy"
+    needs: build
+
+    steps:
+      - name: Deploy
+        run: ""
       - name: Test
         run: ""
         
