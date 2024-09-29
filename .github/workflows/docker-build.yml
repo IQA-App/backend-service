@@ -1,0 +1,35 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: iqaapp
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Project
+        run: npm run build
+
+      - name: Build Docker image
+        run: docker build -t iqaapp/backapp:latest .
+
+      - name: Push Docker image to Docker Hub
+        run: docker push iqaapp/backapp:latest
+
+      - name: Display Docker images
+        run: docker images
