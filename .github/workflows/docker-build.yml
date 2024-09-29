@@ -44,8 +44,15 @@ jobs:
     steps:
       - name: Deploy
         run: ""
-      - name: Test
+  devtest:
+    runs-on: ubuntu-latest
+    name: "DEV test"
+    needs: [build, dev]
+
+    steps:
+      - name: Deploy
         run: ""
+
   qa:
     runs-on: ubuntu-latest
     name: "QA deploy"
@@ -54,16 +61,22 @@ jobs:
     steps:
       - name: Deploy
         run: ""
-      - name: Test
-        run: ""
-  prod:
+  qatest:
     runs-on: ubuntu-latest
-    name: "PROD deploy"
+    name: "QA test"
     needs: qa
 
     steps:
       - name: Deploy
         run: ""
-      - name: Test
+
+  prod:
+    runs-on: ubuntu-latest
+    name: "PROD deploy"
+    needs: [qa, qatest]
+
+    steps:
+      - name: Deploy
         run: ""
+
         
