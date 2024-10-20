@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsNotEmpty,
   IsNumber,
@@ -9,6 +10,11 @@ import { Category } from 'src/category/entities/category.entity';
 import { User } from 'src/user/entities/user.entity';
 
 export class CreateTransactionDto {
+  @ApiProperty({
+    example: 'title',
+    description: `Title must be a string!`,
+  })
+  
   @IsNotEmpty()
   title: string;
 
