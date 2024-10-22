@@ -11,12 +11,14 @@ import {
   UseGuards,
   Req,
   Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { TransactionService } from './transaction.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { title } from 'process';
 
 @Controller('transactions')
 export class TransactionController {
@@ -40,6 +42,15 @@ export class TransactionController {
     },
   })
   create(@Body() createTransactionDto: CreateTransactionDto, @Req() req) {
+    const title = createTransactionDto.title;
+    if (!title) {
+      throw new BadRequestException('Title is required!');
+    }
+
+    const pattern = /\s/;
+    if (pattern.test(title)) {
+      throw new BadRequestException('The title cannot contain whitespace!');
+    }
     console.log('- req.user -', req.user);
     console.log('- req.user.id -', req.user.id);
     return this.transactionService.create(createTransactionDto, +req.user.id);
@@ -62,9 +73,6 @@ export class TransactionController {
     const limitNumber = Number(limit) || 3; // If parsing fails, default to 3
 
     return this.transactionService.findAllWithPagination(
-      // +req.user.id,
-      // +page,
-      // +limit,
       +req.user.id,
       pageNumber,
       limitNumber,
@@ -101,6 +109,15 @@ export class TransactionController {
     @Param('id') id: string,
     @Body() updateTransactionDto: UpdateTransactionDto,
   ) {
+    const title = updateTransactionDto.title;
+    if (!title) {
+      throw new BadRequestException('Title is required!');
+    }
+
+    const pattern = /\s/;
+    if (pattern.test(title)) {
+      throw new BadRequestException('The title cannot contain whitespace!');
+    }
     return this.transactionService.update(+id, updateTransactionDto);
   }
 
