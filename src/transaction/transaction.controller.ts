@@ -51,8 +51,7 @@ export class TransactionController {
     if (pattern.test(title)) {
       throw new BadRequestException('The title cannot contain whitespace!');
     }
-    console.log('- req.user -', req.user);
-    console.log('- req.user.id -', req.user.id);
+
     return this.transactionService.create(createTransactionDto, +req.user.id);
   }
 

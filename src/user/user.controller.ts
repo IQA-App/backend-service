@@ -98,7 +98,6 @@ export class UserController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete user by ID' })
   async remove(@Param('id') id: string, @Request() req) {
-    console.log('-- User from request: --', req.user);
     const numericId = Number(id);
     if (!id.trim() || isNaN(numericId) || numericId <= 0) {
       throw new BadRequestException(

@@ -35,8 +35,6 @@ export class TransactionService {
       user: { id },
     };
 
-    console.log('- newTransaction -', newTransaction);
-
     if (!newTransaction) throw new BadRequestException('Something went wrong');
     return await this.transactionRepository.save(newTransaction);
   }
