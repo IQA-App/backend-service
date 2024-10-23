@@ -18,15 +18,12 @@ export class AuthService {
 
   async validateUser(email: string, password: string) {
     const user = await this.userService.findOne(email);
-    console.log('-- user --', user);
     if (!user) {
-      console.log('-- User not found for email: --', email);
       throw new BadRequestException(
         'User not found or email or password are incorrect!',
       );
     }
 
-    console.log('-- User found: --', user);
     const passwordIsMatch = await argon2.verify(user.password, password);
     if (passwordIsMatch) {
       return user;

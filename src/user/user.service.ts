@@ -56,7 +56,6 @@ export class UserService {
     const requestedEmail = await this.userRepository.findOne({
       where: { email: email },
     });
-    console.log('-- FindOne --', requestedEmail);
     return requestedEmail;
   }
 

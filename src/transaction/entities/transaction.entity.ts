@@ -6,14 +6,17 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
 export class Transaction {
-  @PrimaryColumn({ name: 'transaction_id' })
+  @PrimaryGeneratedColumn({ name: 'transaction_id' })
   id: number;
+
+  @Column({ nullable: false })
+  title: string;
 
   @Column({ nullable: true })
   type: string;
