@@ -43,6 +43,10 @@ $ npm run test:cov
 
 - Swagger is here: [Swagger](https://backapp-dhfngacba4gna8de.eastus-01.azurewebsites.net/api)
 
+### Some important points
+
+- src/app.module.ts >  synchronize: true. This statement from [GitHub](https://github.com/typeorm/typeorm/issues/4731) synchronize called without arguments tries to "auto synchronize" current DB schema to match typeorm entities. If called with true as first argument it drops DB and then recreates DB structure from typeorm entities. "auto synchronization" is only viable for development. In production, you should just use migrations to update your DB.
+
 ## Resources
 
 Check out a few resources that may come in handy when working with NestJS:

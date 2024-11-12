@@ -26,6 +26,10 @@ export class Transaction {
   user: User;
 
   @ManyToOne(() => Category, (category) => category.transactions)
+  // @ManyToOne(() => Category, (category) => category.transactions, {
+  //   onDelete: 'SET NULL', // when category is deleted the Xactions belonging to it receive category 'NULL' // OWNFIX: missing this line
+  //   // onDelete: 'CASCADE', // when category is deleted the Xactions belonging to it are also deleted
+  // })
   @JoinColumn({ name: 'category_id' })
   category: Category;
 
