@@ -34,7 +34,7 @@ export class TransactionController {
     schema: {
       type: 'object',
       properties: {
-        title: { type: 'string', example: 'March' },
+        title: { type: 'string', example: 'Purchase' },
         amount: { type: 'number', example: 1200 },
         type: { type: 'string', example: 'income' },
         category: { type: 'number', example: 12 },
