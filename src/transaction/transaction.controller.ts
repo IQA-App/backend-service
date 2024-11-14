@@ -88,7 +88,8 @@ export class TransactionController {
     return this.transactionService.findAll(+req.user.id);
   }
 
-  @Get(':id')
+  //  url/transaction/1
+  @Get(':type/:id')
   @UsePipes(new ValidationPipe())
   @UseGuards(JwtAuthGuard)
   @ApiTags('transactions')
