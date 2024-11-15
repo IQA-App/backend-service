@@ -57,6 +57,24 @@ export class TransactionController {
     return this.transactionService.create(createTransactionDto, +req.user.id);
   }
 
+  @Get(':type/find')
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe())
+  @ApiTags('transactions')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Find amount of transactions' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        type: { type: 'string', example: 'income or expense' }
+      },
+    },
+  })
+  findAllByType(@Req() req, @Param('type') type: string) {
+    return this.transactionService.findAllByType(+req.user.id, type);
+  }
+
   // url/transactions/pagination?page=1&limit=3
   @Get('pagination')
   @UseGuards(JwtAuthGuard)
