@@ -124,4 +124,20 @@ export class TransactionService {
     });
     return transaction;
   }
+
+  async findAllByType(id: number, type: string) {
+    if (type !== 'income' && type !== 'expense')
+      throw new BadRequestException('Invalid type!');
+
+    const transactions = await this.transactionRepository.find({
+      where: {
+        user: { id },
+        type,
+      },
+    });
+
+    const total = transactions.reduce((acc, obj) => acc + obj.amount, 0);
+
+    return `The total amount of ${type} is: ${total}`;
+  }
 }
