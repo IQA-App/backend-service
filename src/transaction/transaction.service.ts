@@ -52,6 +52,10 @@ export class TransactionService {
   }
 
   async findOne(id: number) {
+    const pattern = /\s/;
+    if (isNaN(id) || pattern.test(id.toString()))
+      throw new BadRequestException('Transaction id must be a number!');
+
     const transaction = await this.transactionRepository.findOne({
       where: {
         id,
@@ -67,9 +71,22 @@ export class TransactionService {
   }
 
   async update(id: number, updateTransactionDto: UpdateTransactionDto) {
+    const pattern = /\s/;
+    if (isNaN(id) || pattern.test(id.toString()))
+      throw new BadRequestException('Transaction id must be a number!');
+
     const transaction = await this.transactionRepository.findOne({
       where: { id },
     });
+    const category = await this.categoryService.findOne(
+      +updateTransactionDto.category,
+    );
+    if (!category || null) {
+      throw new NotFoundException(
+        `Category with id ${updateTransactionDto.category} not found!`,
+      );
+    }
+
     if (!transaction)
       throw new NotFoundException(`Transaction with id ${id} not found!`);
     await this.transactionRepository.update(id, updateTransactionDto);
@@ -77,6 +94,10 @@ export class TransactionService {
   }
 
   async remove(id: number) {
+    const pattern = /\s/;
+    if (isNaN(id) || pattern.test(id.toString()))
+      throw new BadRequestException('Transaction id must be a number!');
+
     const transaction = await this.transactionRepository.findOne({
       where: { id },
     });
