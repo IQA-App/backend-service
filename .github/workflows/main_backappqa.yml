@@ -69,6 +69,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: 'IQA-App/ui-tests'  
+          token: ${{ secrets.UI_TESTS_REPO_TOKEN }}
           ref: main  
 
       - name: Install dependencies for Playwright tests
