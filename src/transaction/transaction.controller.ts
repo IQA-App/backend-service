@@ -12,6 +12,7 @@ import {
   Req,
   Query,
   BadRequestException,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { TransactionService } from './transaction.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
@@ -19,6 +20,7 @@ import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { title } from 'process';
+import { AuthorGuard } from 'src/guard/author.guard';
 
 @Controller('transactions')
 export class TransactionController {
@@ -55,6 +57,24 @@ export class TransactionController {
     return this.transactionService.create(createTransactionDto, +req.user.id);
   }
 
+  @Get(':type/find')
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe())
+  @ApiTags('transactions')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Find amount of transactions' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        type: { type: 'string', example: 'income or expense' }
+      },
+    },
+  })
+  findAllByType(@Req() req, @Param('type') type: string) {
+    return this.transactionService.findAllByType(+req.user.id, type);
+  }
+
   // url/transactions/pagination?page=1&limit=3
   @Get('pagination')
   @UseGuards(JwtAuthGuard)
@@ -88,29 +108,41 @@ export class TransactionController {
     return this.transactionService.findAll(+req.user.id);
   }
 
-  @Get(':id')
+  //  url/transactions/transaction/1
+  //  url/categories/category/1
+  @Get(':type/:id')
   @UsePipes(new ValidationPipe())
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AuthorGuard) //  AuthorGuard allows to do actions if the user owns resources transactions/categories
   @ApiTags('transactions')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get single transaction' })
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    const pattern = /\s/;
+    if (isNaN(id) || pattern.test(id.toString()))
+      throw new BadRequestException('Transaction id must be a number!');
+
     return this.transactionService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Patch(':type/:id')
   @UsePipes(new ValidationPipe())
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AuthorGuard)
   @ApiTags('transactions')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update transaction' })
   update(
     @Param('id') id: string,
     @Body() updateTransactionDto: UpdateTransactionDto,
+    @Req() req,
   ) {
     const title = updateTransactionDto.title;
     if (!title) {
       throw new BadRequestException('Title is required!');
+    }
+
+    const category = req.body.category;
+    if (!category) {
+      throw new BadRequestException('Category is required!');
     }
 
     const pattern = /\s/;
@@ -120,13 +152,13 @@ export class TransactionController {
     return this.transactionService.update(+id, updateTransactionDto);
   }
 
-  @Delete(':id')
+  @Delete(':type/:id')
   @UsePipes(new ValidationPipe())
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AuthorGuard)
   @ApiTags('transactions')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete transaction' })
-  remove(@Param('id') id: string) {
-    return this.transactionService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.transactionService.remove(id);
   }
 }

@@ -17,6 +17,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AuthorGuard } from 'src/guard/author.guard';
 
 @Controller('categories')
 export class CategoryController {
@@ -41,8 +42,8 @@ export class CategoryController {
     return this.categoryService.findAll(+reg.user.id);
   }
 
-  @Get(':id')
-  @UseGuards(JwtAuthGuard)
+  @Get(':type/:id')
+  @UseGuards(JwtAuthGuard, AuthorGuard) //  AuthorGuard allows to do actions if the user owns resources transactions/categories
   @UsePipes(new ValidationPipe())
   @ApiTags('category')
   @ApiBearerAuth()
@@ -57,8 +58,8 @@ export class CategoryController {
     return this.categoryService.findOne(+id);
   }
 
-  @Patch(':id')
-  @UseGuards(JwtAuthGuard)
+  @Patch(':type/:id')
+  @UseGuards(JwtAuthGuard, AuthorGuard)
   @UsePipes(new ValidationPipe())
   @ApiTags('category')
   @ApiBearerAuth()
@@ -76,8 +77,8 @@ export class CategoryController {
     return this.categoryService.update(+id, updateCategoryDto);
   }
 
-  @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @Delete(':type/:id')
+  @UseGuards(JwtAuthGuard, AuthorGuard)
   @UsePipes(new ValidationPipe())
   @ApiTags('category')
   @ApiBearerAuth()
