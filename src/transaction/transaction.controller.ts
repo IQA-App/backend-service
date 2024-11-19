@@ -18,7 +18,13 @@ import { TransactionService } from './transaction.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { title } from 'process';
 import { AuthorGuard } from 'src/guard/author.guard';
 
@@ -63,13 +69,11 @@ export class TransactionController {
   @ApiTags('transactions')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Find amount of transactions' })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        type: { type: 'string', example: 'income or expense' }
-      },
-    },
+  @ApiParam({
+    name: 'type',
+    description: 'Type must be income or expense',
+    required: true,
+    type: 'String',
   })
   findAllByType(@Req() req, @Param('type') type: string) {
     return this.transactionService.findAllByType(+req.user.id, type);
@@ -116,6 +120,12 @@ export class TransactionController {
   @ApiTags('transactions')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get single transaction' })
+  @ApiParam({
+    name: 'type',
+    description: `Type must be 'transaction'`,
+    required: true,
+    type: 'String',
+  })
   findOne(@Param('id', ParseIntPipe) id: number) {
     const pattern = /\s/;
     if (isNaN(id) || pattern.test(id.toString()))
@@ -130,6 +140,23 @@ export class TransactionController {
   @ApiTags('transactions')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update transaction' })
+  @ApiParam({
+    name: 'type',
+    description: `Type must be 'transaction'`,
+    required: true,
+    type: 'String',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        title: { type: 'string', example: 'Purchase' },
+        amount: { type: 'number', example: 1200 },
+        type: { type: 'string', example: 'income' },
+        category: { type: 'number', example: 12 },
+      },
+    },
+  })
   update(
     @Param('id') id: string,
     @Body() updateTransactionDto: UpdateTransactionDto,
@@ -158,6 +185,12 @@ export class TransactionController {
   @ApiTags('transactions')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete transaction' })
+  @ApiParam({
+    name: 'type',
+    description: `Type must be 'transaction'`,
+    required: true,
+    type: 'String',
+  })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.transactionService.remove(id);
   }
