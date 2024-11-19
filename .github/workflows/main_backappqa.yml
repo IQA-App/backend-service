@@ -73,14 +73,26 @@ jobs:
 
       - name: Install dependencies for Playwright tests
         run: |
-          cd ui-tests  
           npm ci  
           npx playwright install --with-deps 
 
-      - name: Run Playwright Tests
+      - name: Write environment variables to ./env/dev.env
         run: |
-          cd ui-tests  
-          npm test  
+          mkdir -p ./env
+          echo "API_BASE_URL=${{ secrets.API_BASE_URL }}" >> ./env/dev.env
+          echo "UI_BASE_URL=${{ secrets.UI_BASE_URL }}" >> ./env/dev.env
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> ./env/dev.env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> ./env/dev.env
+          echo "DB_USER=${{ secrets.DB_USER }}" >> ./env/dev.env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> ./env/dev.env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> ./env/dev.env
+          echo "SERVERPORT=${{ secrets.SERVERPORT }}" >> ./env/dev.env
+          echo "EMAIL_PREFIX=${{ secrets.EMAIL_PREFIX }}" >> ./env/dev.env
+          echo "EMAIL_DOMAIN=${{ secrets.EMAIL_DOMAIN }}" >> ./env/dev.env
+          echo "CI_RUN=true" >> ./env/dev.env
+
+      - name: Run Playwright Tests
+        run: npm test  
         env:
           API_BASE_URL: ${{ secrets.API_BASE_URL }}
           UI_BASE_URL: ${{ secrets.UI_BASE_URL }}
@@ -93,24 +105,3 @@ jobs:
           EMAIL_PREFIX: ${{ secrets.EMAIL_PREFIX }}
           EMAIL_DOMAIN: ${{ secrets.EMAIL_DOMAIN }}
           CI_RUN: true
-
-      - name: Upload Playwright Reports
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: ui-tests/playwright-report/  
-          retention-days: 30
-
-      - name: Attach Artifacts on Failure
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: Test Artifacts
-          path: ui-tests/test-results/  
-
-      - name: Deploy Playwright Reports to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PUBLISH_BRANCH: gh-pages
-          publish_dir: ui-tests/playwright-report  
