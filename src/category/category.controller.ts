@@ -16,7 +16,13 @@ import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthorGuard } from 'src/guard/author.guard';
 
 @Controller('categories')
@@ -48,6 +54,12 @@ export class CategoryController {
   @ApiTags('category')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get category by id' })
+  @ApiParam({
+    name: 'type',
+    description: `Type must be 'category'`,
+    required: true,
+    type: 'String',
+  })
   findOne(@Param('id') id: string) {
     const numericId = Number(id);
     if (!id.trim() || isNaN(numericId) || numericId <= 0) {
@@ -64,6 +76,20 @@ export class CategoryController {
   @ApiTags('category')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update category by id' })
+  @ApiParam({
+    name: 'type',
+    description: `Type must be 'category'`,
+    required: true,
+    type: 'String',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        title: { type: 'string', example: 'Nischtyaki' },
+      },
+    },
+  })
   update(
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
@@ -83,6 +109,12 @@ export class CategoryController {
   @ApiTags('category')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete category by id' })
+  @ApiParam({
+    name: 'type',
+    description: `Type must be 'category'`,
+    required: true,
+    type: 'String',
+  })
   remove(@Param('id') id: string) {
     const numericId = Number(id);
     if (!id.trim() || isNaN(numericId) || numericId <= 0) {
