@@ -28,7 +28,7 @@ jobs:
         run: npm run build
 
       - name: Build Docker image
-        run: docker build --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} --no-cache -t iqaapp/backapp:latest .
+        run: docker build --build-arg JWT_SECRET = ${{ secrets.JWT_SECRET }} --no-cache -t iqaapp/backapp:latest .
 
       - name: Push Docker image to Docker Hub
         run: docker push iqaapp/backapp:latest
