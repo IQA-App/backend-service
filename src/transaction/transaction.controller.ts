@@ -26,8 +26,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { title } from 'process';
-import { AuthorTransactionGuard } from 'src/guard/author.transaction-guard';
-// import { AuthorGuard } from 'src/guard/author.guard';
+import { AuthorGuard } from 'src/guard/author.guard';
 
 @Controller('transactions')
 export class TransactionController {
@@ -56,9 +55,14 @@ export class TransactionController {
       throw new BadRequestException('Title is required!');
     }
 
+    const pattern = /\s/;
+    if (pattern.test(title)) {
+      throw new BadRequestException('The title cannot contain whitespace!');
+    }
+
     return this.transactionService.create(createTransactionDto, +req.user.id);
   }
-
+  
   @Get(':type/find')
   @UseGuards(JwtAuthGuard)
   @UsePipes(new ValidationPipe())
@@ -108,12 +112,20 @@ export class TransactionController {
     return this.transactionService.findAll(+req.user.id);
   }
 
-  @Get('/:id')
+  //  url/transactions/transaction/1
+  //  url/categories/category/1
+  @Get(':type/:id')
   @UsePipes(new ValidationPipe())
-  @UseGuards(JwtAuthGuard, AuthorTransactionGuard) //  AuthorGuard allows to do actions if the user owns resources transactions/categories
+  @UseGuards(JwtAuthGuard, AuthorGuard) //  AuthorGuard allows to do actions if the user owns resources transactions/categories
   @ApiTags('transactions')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get single transaction' })
+  @ApiParam({
+    name: 'type',
+    description: `Type must be 'transaction'`,
+    required: true,
+    type: 'String',
+  })
   findOne(@Param('id', ParseIntPipe) id: number) {
     const pattern = /\s/;
     if (isNaN(id) || pattern.test(id.toString()))
@@ -122,12 +134,18 @@ export class TransactionController {
     return this.transactionService.findOne(+id);
   }
 
-  @Patch('/:id')
+  @Patch(':type/:id')
   @UsePipes(new ValidationPipe())
-  @UseGuards(JwtAuthGuard, AuthorTransactionGuard)
+  @UseGuards(JwtAuthGuard, AuthorGuard)
   @ApiTags('transactions')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update transaction' })
+  @ApiParam({
+    name: 'type',
+    description: `Type must be 'transaction'`,
+    required: true,
+    type: 'String',
+  })
   @ApiBody({
     schema: {
       type: 'object',
@@ -161,12 +179,18 @@ export class TransactionController {
     return this.transactionService.update(+id, updateTransactionDto);
   }
 
-  @Delete('/:id')
+  @Delete(':type/:id')
   @UsePipes(new ValidationPipe())
-  @UseGuards(JwtAuthGuard, AuthorTransactionGuard)
+  @UseGuards(JwtAuthGuard, AuthorGuard)
   @ApiTags('transactions')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete transaction' })
+  @ApiParam({
+    name: 'type',
+    description: `Type must be 'transaction'`,
+    required: true,
+    type: 'String',
+  })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.transactionService.remove(id);
   }
