@@ -56,16 +56,11 @@ export class TransactionController {
       throw new BadRequestException('Title is required!');
     }
 
-    const pattern = /\s/;
-    if (pattern.test(title)) {
-      throw new BadRequestException('The title cannot contain whitespace!');
-    }
-
     return this.transactionService.create(createTransactionDto, +req.user.id);
   }
 
   @Get(':type/find')
-  @UseGuards(JwtAuthGuard, )
+  @UseGuards(JwtAuthGuard)
   @UsePipes(new ValidationPipe())
   @ApiTags('transactions')
   @ApiBearerAuth()
@@ -113,20 +108,12 @@ export class TransactionController {
     return this.transactionService.findAll(+req.user.id);
   }
 
-  //  url/transactions/transaction/1
-  //  url/categories/category/1
   @Get('/:id')
   @UsePipes(new ValidationPipe())
   @UseGuards(JwtAuthGuard, AuthorTransactionGuard) //  AuthorGuard allows to do actions if the user owns resources transactions/categories
   @ApiTags('transactions')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get single transaction' })
-  // @ApiParam({
-  //   name: 'type',
-  //   description: `Type must be 'transaction'`,
-  //   required: true,
-  //   type: 'String',
-  // })
   findOne(@Param('id', ParseIntPipe) id: number) {
     const pattern = /\s/;
     if (isNaN(id) || pattern.test(id.toString()))
@@ -141,12 +128,6 @@ export class TransactionController {
   @ApiTags('transactions')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update transaction' })
-  // @ApiParam({
-  //   name: 'type',
-  //   description: `Type must be 'transaction'`,
-  //   required: true,
-  //   type: 'String',
-  // })
   @ApiBody({
     schema: {
       type: 'object',
@@ -186,12 +167,6 @@ export class TransactionController {
   @ApiTags('transactions')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete transaction' })
-  // @ApiParam({
-  //   name: 'type',
-  //   description: `Type must be 'transaction'`,
-  //   required: true,
-  //   type: 'String',
-  // })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.transactionService.remove(id);
   }
