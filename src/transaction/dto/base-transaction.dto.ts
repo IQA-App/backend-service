@@ -22,7 +22,7 @@ export class BaseTransactionDto {
     description: `Title must be a string!`,
   })
   @IsNotEmpty()
-  @MinLength(6, { message: 'Title must be at least 6 characters!' })
+  @MinLength(2, { message: 'Title must be at least 2 characters!' })
   @MaxLength(20, { message: 'Title must be at most 20 characters long!' })
   title: string;
 
