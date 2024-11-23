@@ -138,6 +138,6 @@ export class TransactionService {
 
     const total = transactions.reduce((acc, obj) => acc + obj.amount, 0);
 
-    return total;
+    return `The total amount of ${type} is: ${total}`;
   }
 }

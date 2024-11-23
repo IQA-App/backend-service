@@ -23,8 +23,7 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { AuthorCategoryGuard } from 'src/guard/author.category-guard';
-// import { AuthorGuard } from 'src/guard/author.guard';
+import { AuthorGuard } from 'src/guard/author.guard';
 
 @Controller('categories')
 export class CategoryController {
@@ -49,18 +48,18 @@ export class CategoryController {
     return this.categoryService.findAll(+reg.user.id);
   }
 
-  @Get(':id')
-  @UseGuards(JwtAuthGuard, AuthorCategoryGuard) //  AuthorGuard allows to do actions if the user owns resources transactions/categories
+  @Get(':type/:id')
+  @UseGuards(JwtAuthGuard, AuthorGuard) //  AuthorGuard allows to do actions if the user owns resources transactions/categories
   @UsePipes(new ValidationPipe())
   @ApiTags('category')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get category by id' })
-  // @ApiParam({
-  //   name: 'type',
-  //   description: `Type must be 'category'`,
-  //   required: true,
-  //   type: 'String',
-  // })
+  @ApiParam({
+    name: 'type',
+    description: `Type must be 'category'`,
+    required: true,
+    type: 'String',
+  })
   findOne(@Param('id') id: string) {
     const numericId = Number(id);
     if (!id.trim() || isNaN(numericId) || numericId <= 0) {
@@ -71,18 +70,18 @@ export class CategoryController {
     return this.categoryService.findOne(+id);
   }
 
-  @Patch('/:id')
-  @UseGuards(JwtAuthGuard, AuthorCategoryGuard)
+  @Patch(':type/:id')
+  @UseGuards(JwtAuthGuard, AuthorGuard)
   @UsePipes(new ValidationPipe())
   @ApiTags('category')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update category by id' })
-  // @ApiParam({
-  //   name: 'title',
-  //   description: `Type must be 'category'`,
-  //   required: true,
-  //   type: 'String',
-  // })
+  @ApiParam({
+    name: 'type',
+    description: `Type must be 'category'`,
+    required: true,
+    type: 'String',
+  })
   @ApiBody({
     schema: {
       type: 'object',
@@ -104,18 +103,18 @@ export class CategoryController {
     return this.categoryService.update(+id, updateCategoryDto);
   }
 
-  @Delete('/:id')
-  @UseGuards(JwtAuthGuard, AuthorCategoryGuard)
+  @Delete(':type/:id')
+  @UseGuards(JwtAuthGuard, AuthorGuard)
   @UsePipes(new ValidationPipe())
   @ApiTags('category')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete category by id' })
-  // @ApiParam({
-  //   name: 'type',
-  //   description: `Type must be 'category'`,
-  //   required: true,
-  //   type: 'String',
-  // })
+  @ApiParam({
+    name: 'type',
+    description: `Type must be 'category'`,
+    required: true,
+    type: 'String',
+  })
   remove(@Param('id') id: string) {
     const numericId = Number(id);
     if (!id.trim() || isNaN(numericId) || numericId <= 0) {
