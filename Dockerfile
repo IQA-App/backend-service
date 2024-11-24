@@ -1,6 +1,12 @@
 # Base image
 FROM node:18
 
+# Объявляем аргумент
+ARG JWT_SECRET
+
+# Устанавливаем переменную окружения
+ENV JWT_SECRET=${JWT_SECRET}  
+
 # Create app directory
 WORKDIR /usr/src/app
 
