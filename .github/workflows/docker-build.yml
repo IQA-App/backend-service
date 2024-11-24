@@ -27,9 +27,18 @@ jobs:
       - name: Build Project
         run: npm run build
 
-      - name: Build Docker image
-        run: docker buildx build --build-arg "JWT_SECRET=${{ secrets.JWT_SECRET }}" --build-arg "DB_HOST=${{ secrets.DB_HOST }}" --build-arg "DB_PORT=${{ secrets.DB_PORT }}" --build-arg "DB_USER=${{ secrets.DB_USER }}" --build-arg "DB_PASSWORD=${{ secrets.DB_PASSWORD }}"--build-arg "DB_NAME=${{ secrets.DB_NAME }}" --build-arg "SERVERPORT=${{ secrets.SERVERPORT }}" --no-cache -t iqaapp/backapp:latest .
-
+      - name: Build Docker Image
+        run: |
+          docker buildx build --build-arg "JWT_SECRET=${{ secrets.JWT_SECRET }}" \
+                        --build-arg "DB_HOST=${{ secrets.DB_HOST }}" \
+                        --build-arg "DB_PORT=${{ secrets.DB_PORT }}" \
+                        --build-arg "DB_USER=${{ secrets.DB_USER }}" \
+                        --build-arg "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" \
+                        --build-arg "DB_NAME=${{ secrets.DB_NAME }}" \
+                        --build-arg "SERVERPORT=${{ secrets.SERVERPORT }}" \
+                        --no-cache \
+                        -t iqaapp/backapp:latest \
+                        .
       - name: Push Docker image to Docker Hub
         run: docker push iqaapp/backapp:latest
 
