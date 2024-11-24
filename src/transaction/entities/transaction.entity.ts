@@ -33,7 +33,7 @@ export class Transaction {
   @JoinColumn({ name: 'category_id' })
   category: Category;
 
-  @Column()
+  @Column('numeric', { scale: 2 })
   amount: number;
 
   @CreateDateColumn()
