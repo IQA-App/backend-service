@@ -47,6 +47,10 @@ export class TransactionService {
       order: {
         createdAt: 'DESC',
       },
+      relations: {
+        user: true,
+        category: true,  
+      },
     });
     return transactions;
   }
