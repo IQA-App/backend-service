@@ -47,10 +47,6 @@ export class TransactionService {
       order: {
         createdAt: 'DESC',
       },
-      relations: {
-        user: true,
-        category: true,  
-      },
     });
     return transactions;
   }
@@ -140,7 +136,10 @@ export class TransactionService {
       },
     });
 
-    const total = transactions.reduce((acc, obj) => acc + obj.amount, 0);
+    const total = transactions.reduce(
+      (acc, obj) => acc + Number(obj.amount),
+      0,
+    );
 
     return total;
   }
