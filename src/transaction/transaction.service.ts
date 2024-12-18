@@ -27,15 +27,18 @@ export class TransactionService {
         `Category with id ${createTransactionDto.category} not found!`,
       );
     }
+
+    const truncatedAmount = Math.floor(createTransactionDto.amount * 100); // it saves amount in cents.
     const newTransaction = {
       title: createTransactionDto.title,
-      amount: createTransactionDto.amount,
+      amount: truncatedAmount,
       type: createTransactionDto.type,
       category: { id: +createTransactionDto.category }, // category must be exsiting in our db,if categoty doesnt exist in db > fail
       user: { id },
     };
 
     if (!newTransaction) throw new BadRequestException('Something went wrong');
+
     return await this.transactionRepository.save(newTransaction);
   }
 
@@ -47,7 +50,17 @@ export class TransactionService {
       order: {
         createdAt: 'DESC',
       },
+      relations: {
+        user: true,
+        category: true,
+      },
     });
+
+    //  returns amount in dollars, since it GET it doesnt reflect data it's just for representaion of data
+    transactions.forEach((transaction) => {
+      transaction.amount = transaction.amount / 100;
+    });
+
     return transactions;
   }
 
@@ -67,6 +80,9 @@ export class TransactionService {
     });
 
     if (!transaction) throw new NotFoundException('Transaction not found!');
+
+    transaction.amount = transaction.amount / 100; //  returns amount in dollars, since it GET it doesnt reflect data it's just for representaion of data
+
     return transaction;
   }
 
@@ -89,8 +105,18 @@ export class TransactionService {
 
     if (!transaction)
       throw new NotFoundException(`Transaction with id ${id} not found!`);
-    await this.transactionRepository.update(id, updateTransactionDto);
-    return { message: `Transaction  with transaction_id: ${id} updated!` };
+
+    const truncatedAmount = Math.floor(updateTransactionDto.amount * 100); // it saves amount in cents. since we do work with financial units, we want  truncate numbers not round
+    const newTransaction = {
+      title: updateTransactionDto.title,
+      amount: truncatedAmount,
+      type: updateTransactionDto.type,
+      category: updateTransactionDto.category, // category must be exsiting in our db,if categoty doesnt exist in db > fail
+    };
+    return (
+      await this.transactionRepository.update(id, newTransaction),
+      `Transaction  with transaction_id: ${id} updated!`
+    );
   }
 
   async remove(id: number) {
@@ -136,10 +162,8 @@ export class TransactionService {
       },
     });
 
-    const total = transactions.reduce(
-      (acc, obj) => acc + Number(obj.amount),
-      0,
-    );
+    const total =
+      transactions.reduce((acc, obj) => acc + Number(obj.amount), 0) / 100;
 
     return total;
   }

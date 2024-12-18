@@ -3,6 +3,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsPositive,
   IsString,
   MaxLength,
   MinLength,
@@ -28,6 +29,7 @@ export class BaseTransactionDto {
 
   @IsNotEmpty()
   @IsNumber()
+  @IsPositive()
   amount: number;
 
   @IsEnum(TransactionType, {

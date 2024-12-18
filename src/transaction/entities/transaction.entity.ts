@@ -1,3 +1,4 @@
+import { IsPositive } from 'class-validator';
 import { Category } from 'src/category/entities/category.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
@@ -33,7 +34,8 @@ export class Transaction {
   @JoinColumn({ name: 'category_id' })
   category: Category;
 
-  @Column('numeric', { scale: 2 })
+  @Column('decimal', { precision: 10, scale: 2 })
+  @IsPositive()
   amount: number;
 
   @CreateDateColumn()
