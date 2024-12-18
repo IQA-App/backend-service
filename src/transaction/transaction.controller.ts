@@ -24,7 +24,7 @@ import {
   ApiOperation,
   ApiParam,
   ApiTags,
-} from '@nestjs/swagger'; 
+} from '@nestjs/swagger';
 import { title } from 'process';
 import { AuthorTransactionGuard } from 'src/guard/author.transaction-guard';
 // import { AuthorGuard } from 'src/guard/author.guard';
@@ -56,10 +56,24 @@ export class TransactionController {
       throw new BadRequestException('Title is required!');
     }
 
+    const amount = req.body.amount;
+    if (amount < 0) {
+      throw new BadRequestException('Amount must be > 0!');
+    }
+
+    const amountString = amount.toFixed(2);
+    const iofAmountString = amountString.indexOf('.');
+    const sliceAmountString = amountString.slice(iofAmountString + 1);
+    if (sliceAmountString.length > 2) {
+      throw new BadRequestException(
+        'Invalid format! provide amount in format: only  2 digits after the dot, like 123.12',
+      );
+    }
+
     return this.transactionService.create(createTransactionDto, +req.user.id);
   }
 
-  @Get(':type/find')
+  @Get(':type/find') //  returns amount of transations
   @UseGuards(JwtAuthGuard)
   @UsePipes(new ValidationPipe())
   @ApiTags('transactions')
@@ -153,11 +167,22 @@ export class TransactionController {
     if (!category) {
       throw new BadRequestException('Category is required!');
     }
-
-    const pattern = /\s/;
-    if (pattern.test(title)) {
-      throw new BadRequestException('The title cannot contain whitespace!');
+    
+    const amout = updateTransactionDto.amount;
+    if (Number(amout) < 0) {
+      throw new BadRequestException('Amount shoold be > 0!');
     }
+
+    const amount = req.body.amount;
+    const amountString = amount.toFixed(2);
+    const iofAmountString = amountString.indexOf('.');
+    const sliceAmountString = amountString.slice(iofAmountString + 1);
+    if (sliceAmountString.length > 2) {
+      throw new BadRequestException(
+        'Invalid format! provide amount in format: only  2 digits after the dot, like 123.12',
+      );
+    }
+
     return this.transactionService.update(+id, updateTransactionDto);
   }
 
