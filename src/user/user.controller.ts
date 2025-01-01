@@ -27,7 +27,8 @@ export class UserController {
   @UsePipes(new ValidationPipe())
   @ApiTags('user')
   @ApiOperation({ summary: 'Create user' })
-  create(@Body() createUserDto: CreateUserDto) {
+  create(@Body() createUserDto: CreateUserDto, @Request() req) {
+    console.log('Create a  user req', req);
     return this.userService.create(createUserDto);
   }
 
