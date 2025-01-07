@@ -1,9 +1,12 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseUserDto } from './base-use.dto';
+import { IsEmail, IsNotEmpty } from 'class-validator';
 
 export class UpdateUserDto extends PartialType(BaseUserDto) {
   @ApiProperty({ example: 'user@example.com' })
+  @IsEmail()
+  @IsNotEmpty()
   email: string;
 
   @ApiProperty({
